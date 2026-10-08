@@ -1,0 +1,32 @@
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import test from "node:test";
+import { createBridge } from "../src/index.js";
+import { signedCallback } from "./helpers.js";
+
+test("例示設定はプレースホルダのままで、受信も往復も外部に出ない", async () => {
+  const raw = JSON.parse(readFileSync(new URL("../config.example.json", import.meta.url), "utf8"));
+  assert.equal(raw.mode, "mock");
+  assert.equal(raw.grok_bot_routine_webhook.configured, false);
+  assert.equal(raw.callback_inbox.configured, false);
+  assert.equal(raw.dot_ingress.configured, false);
+  assert.equal(raw.dot_ingress.endpoint, null);
+  assert.equal(raw.dot_ingress.automatic_wake, false);
+  assert.match(raw.grok_bot_routine_webhook.endpoint, /example\.invalid/);
+  assert.match(raw.grok_bot_routine_webhook.auth_secret, /REPLACE/);
+  assert.match(raw.callback_inbox.shared_secret, /REPLACE/);
+  assert.equal(raw.grok_bot_routine_webhook.allow_unverified_scheme, false);
+  const bridge = createBridge({ config: raw });
+  assert.equal(bridge.status().mode, "mock");
+  assert.equal(bridge.status().network_calls, false);
+  assert.equal(bridge.status().grok_bot_contacted, false);
+  assert.equal(bridge.status().callback_inbox.auth_configured, false);
+  assert.equal(bridge.status().dot_ingress.available, false);
+  const packed = signedCallback({ summary: "should-not-store" });
+  const received = bridge.inbox.receive({ rawBody: packed.raw, headers: packed.headers });
+  assert.equal(received.code, "callback_auth_unconfigured");
+  const round = await bridge.runMockRoundTrip({ instruction: "x", payload: { a: 1 } });
+  assert.equal(round.code, "callback_auth_unconfigured");
+  assert.equal(round.grok_bot_contacted, false);
+  assert.equal(JSON.stringify(bridge.status()).includes("REPLACE"), false);
+});
