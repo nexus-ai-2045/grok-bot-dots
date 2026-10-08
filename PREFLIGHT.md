@@ -1,36 +1,39 @@
 <!-- repo-preflight:review-record -->
-# Publication review record
+# 共有前の検査記録
 
-Status: local candidate prepared; external publication gates and human review remain pending.
+状態：検査後、所有者が非公開リポジトリへのアップロードとレビュー用プルリクエストの作成を承認しました。非公開リポジトリにドラフトの [PR #1](https://github.com/nexus-ai-2045/grok-bot-dots/pull/1) を作成済みで、未マージです。操作の承認は、所有者がコードを目視レビューしたことを意味しません。
 
-This candidate is a source-only export. Original repository history, personal workspace material, private reports, credentials, and unrelated artifacts are not included. There is no release, remote CI result, or live integration verification.
+共有対象はソースのみを取り出したスナップショットです。元リポジトリの履歴、個人作業領域の資料、非公開の報告書、認証情報、無関係な成果物は含めていません。リリース、リモート CI の実行結果、実サービスとの連携検証はありません。
 
-## Checks and evidence
+## 検査と根拠
 
-- The publication candidate passed all 36 offline tests and its mock demo with exit status 0. The repaired baseline was independently reported to pass six additional regression probes, separate from the shipped 36-test suite.
-- The candidate keeps implementation and test source unchanged; package name, public documentation and a manual-only verification workflow are prepared separately.
-- README, MIT LICENSE, SECURITY and CONTRIBUTING have been reviewed for experimental scope. Third-party rights are not established by a scanner.
-- The pinned repo-preflight revision is `10d4b44001d5092a8cbfc8ea70fb168552a54cc6`. Full-tree scan and `push`, `publish --audience public`, and `create_repo` gates must be recorded before external actions.
-- A source snapshot with no HEAD initially returned `git_probe_failed`. The public author identity was then verified against an existing public commit associated with the authenticated repository owner; a source-only local initial commit enables full Git/tree scanning. No original history is imported.
-- The scanner's history scan skips blobs larger than 2,000,000 bytes. Custom secrets, binary/encoded information and personal data can evade pattern detection. Source-only review is not a historical audit of the original repository.
-- Supplemental gitleaks is not installed and was not run. Pattern checks and manual source review do not prove the absence of all sensitive data.
+- 共有候補は、オフラインテスト 36 件とモックデモに終了コード 0 で合格しました。修正済みの基準ソースは、同梱の 36 件とは別の独立した回帰検査 6 件についても合格が報告されています。
+- 共有用の準備では、実装とテストのソースを維持し、パッケージ名、文書、手動専用の検証ワークフローを別途整えました。今回の日本語化では `README.md`、`SECURITY.md`、`CONTRIBUTING.md`、`PREFLIGHT.md` のみを更新し、実装、テスト、パッケージ、英語原文の MIT ライセンス、ワークフローは変更していません。
+- README、MIT ライセンス、SECURITY、CONTRIBUTING について、実験用の範囲に収まっているか独立したエージェントレビューで確認しました。スキャナーで第三者の権利を確認することはできません。
+- repo-preflight はリビジョン `10d4b44001d5092a8cbfc8ea70fb168552a54cc6` に固定しています。共有準備時に全ツリー検査と操作別の確認事項を記録しました。機械検査は操作承認の代わりにはならず、以後の外部操作でも、その操作に対応する検査と承認が必要です。
+- 当初、HEAD のないソーススナップショットでは `git_probe_failed` が返りました。その後、認証済みのリポジトリ所有者に対応する既存の公開コミットと作者名義を照合し、ソースのみのローカル初期コミットを作成して Git とツリーの検査を可能にしました。元の履歴は取り込んでいません。
+- 初回アップロードのリモートコミットは `bbd097bd265d5b8dff8d3be4dd01bcf939c09dd3` で、ツリー `9855252f559b20f0101e18337dbefd1bb51c8e63` の全 35 ファイルが検査済み候補と一致することを確認しました。これは日本語化前の初回アップロードの記録です。
+- スキャナーの履歴検査は、2,000,000 バイトを超える Git オブジェクトの内容を読み飛ばします。独自形式の秘密情報、バイナリ・符号化された情報、個人データはパターン検査をすり抜ける可能性があります。ソースのみのレビューは、元リポジトリ全履歴の監査ではありません。
+- 追加検査用の gitleaks は未インストールで、実行していません。パターン検査とソースレビューによって、すべての機密情報が存在しないと証明することはできません。
 
-## CI configuration and runtime
+## CI の設定と実行状況
 
-A real manual-only `workflow_dispatch` workflow is present for Node.js 22, the 36-test offline suite and mock demo. Its only permission is `contents: read`. Official actions use immutable commit references; checkout does not persist credentials and package caching is disabled. There are no automatic triggers, configured project secrets, uploads, deployments or live bridge requests.
+Node.js 22、オフラインテスト 36 件、モックデモを対象とする手動専用の `workflow_dispatch` ワークフローがあります。権限は `contents: read` のみです。公式 Actions は不変のコミット参照を使い、チェックアウト時の認証情報の保存とパッケージキャッシュは無効です。自動起動、プロジェクトの秘密情報、アップロード、デプロイ、実サービスへのブリッジ呼び出しは設定していません。
 
-GitHub CI runtime is UNTESTED: no run has been requested or observed. Local tests and demo passed; configuration inspection is not execution evidence. A future manual run can consume runner quota and retrieve checkout/runtime dependencies, and must be separately requested. No scanner exception or fabricated CI result is recorded. The manifest declares zero third-party package dependencies; a current ecosystem vulnerability audit has not been performed.
+GitHub 上の CI は未実行・未検証です。初回アップロード後の確認では実行件数は 0 件で、実行の依頼も行っていません。ローカルのテストとデモは合格しましたが、設定の確認は実行の証拠にはなりません。今後の手動実行ではランナーの実行枠を消費し、チェックアウトや実行環境の依存物を取得する可能性があるため、別途の依頼が必要です。スキャナーの例外や架空の CI 成功結果は記録していません。パッケージ定義上、サードパーティーのパッケージ依存は 0 件ですが、関連する依存物の最新の脆弱性監査は実施していません。
 
-## Unresolved external gates
+## 承認済みの操作と残る確認事項
 
-The repository creation gate defaults to private creation. Public audience expansion is a separate publish intent. Account and Git author/committer identity, exact source tree and commit, remote destination, required questions, and human review must be confirmed for the operation. No remote creation, push, visibility change, workflow enablement, or release is authorized by this document alone.
+非公開リポジトリへの初回アップロードとドラフト PR の作成は、所有者の操作承認に基づいて完了しています。マージ、公開範囲の拡大、ワークフローの実行、リリース、デプロイは承認済みとして扱いません。
 
-## Human review
+以後の外部操作では、使用アカウント、Git の作者・コミッター名義、対象の正確なツリーとコミット、送信先、必要な確認事項、その操作に対する承認を確認してください。この文書だけで、新たなリポジトリ作成、プッシュ、可視性の変更、ワークフローの有効化・実行、リリースを承認するものではありません。
 
-Reviewer: pending.
-Reviewed commit: exact candidate commit is recorded in the separate review packet; human review is pending.
-Decision: pending; no human visual approval recorded in this file.
+## レビューと所有者の承認
 
-## Operations and rollback
+独立したエージェントによるソースレビューと機械検査は実施済みです。初回アップロードの対象コミットとツリーは上記のとおりです。
 
-There is no deployed service or monitoring setup. Stop the local process to discard in-memory state. To retract published source, coordinate a separate repository visibility or removal decision; public copies cannot be reliably recalled.
+所有者による承認の範囲は、非公開アップロードとドラフト PR の作成という操作です。所有者自身によるコードの目視レビューの完了は、この記録では確認していません。コードの目視レビューとマージ判断は未完了として扱います。
+
+## 運用と取り下げ
+
+稼働中のサービスや監視設定はありません。ローカルプロセスを停止すると、メモリ内の状態は破棄されます。共有したソースを取り下げる場合は、リポジトリの可視性変更や削除について別途判断してください。一度公開されたコピーを確実に回収することはできません。

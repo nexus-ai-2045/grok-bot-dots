@@ -1,57 +1,57 @@
 # grok-bot-dots
 
-Offline experimental Grok Bot / dot bridge model for developers exploring signed callback and inbox contracts. It is not a supported Grok Bot or dot integration and is not production-ready.
+署名付きコールバックと受信箱の仕様を検討する開発者向けの、オフライン実験用 Grok Bot / dot ブリッジモデルです。Grok Bot や dot が正式にサポートする連携機能ではなく、本番運用には対応していません。
 
-## Quick start
+## はじめに
 
-Requires Node.js 22 or later. There are no third-party package dependencies and no installation step.
+Node.js 22 以降が必要です。サードパーティーのパッケージ依存はなく、インストール作業も不要です。
 
 ```sh
 node --test test/*.test.js
 node scripts/mock-demo.js
 ```
 
-The demo performs an in-process signed callback round trip using an ephemeral key. Its result includes `mock-routine-ok`, `grok_bot_contacted: false`, and an unconfigured dot ingress. It does not contact a live service. Package publishing remains disabled with `private: true`.
+デモは一時的な鍵を使い、署名付きコールバックの往復を同一プロセス内で実行します。結果には `mock-routine-ok`、`grok_bot_contacted: false`、未設定の dot 受信口が含まれます。実サービスには接続しません。パッケージの公開は `private: true` により無効にしています。
 
-## Overview: what this prototype does
+## 試作モデルの機能
 
-- Generates correlation IDs and keeps request hashes and lengths rather than instruction text in pending records.
-- Models HMAC-SHA256 signed callbacks, timestamp tolerance, strict schemas, duplicate/conflicting event detection, bounded inbox/pending capacity, and hop limits.
-- Exposes in-process `bridge_status`, `list_inbox`, and `read_inbox_event` tool handlers.
-- Uses mock mode by default and refuses placeholder credentials and unsupported schemes.
-- Applies destination/address validation and local deadlines to the experimental configured path.
+- 相関 ID を生成し、処理待ちレコードには指示本文の代わりにリクエストのハッシュと長さを保持します。
+- HMAC-SHA256 による署名付きコールバック、タイムスタンプの許容範囲、厳密なスキーマ、重複・競合イベントの検出、受信箱と処理待ち件数の上限、ホップ数の制限をモデル化しています。
+- 同一プロセス内で `bridge_status`、`list_inbox`、`read_inbox_event` のツールハンドラーを提供します。
+- 既定ではモックモードを使用し、プレースホルダーの認証情報や未対応の認証方式を拒否します。
+- 実験用の設定済み経路には、宛先・アドレスの検証とローカルの処理期限を適用します。
 
-## Trust boundary and limitations
+## 信頼境界と制限
 
-There is no HTTP listener, stdio MCP server, built-in network client, live Grok Bot routine adapter, or dot wake integration. The callback envelope is a local experimental contract, not a verified Grok Bot callback specification. Real-service end-to-end integration has not been tested.
+HTTP リスナー、標準入出力（stdio）を使う MCP サーバー、組み込みのネットワーククライアント、実際の Grok Bot ルーティンに接続するアダプター、dot を起動する連携機能はありません。コールバックのメッセージ形式はローカル実験用の仕様であり、検証済みの Grok Bot コールバック仕様ではありません。実サービスとのエンドツーエンド連携は未検証です。
 
-Injected `lookup`, `transport`, clock, and other callbacks are trusted executable code. They are not sandboxed. The `offline_mock: true`, `redirect: "error"`, `resolved_ips`, and `tls_servername` fields are advisory inputs to an injected callback. They do not enforce offline operation or prevent a callback from performing arbitrary networking.
+注入される `lookup`、`transport`、時計、その他のコールバックは、信頼できる実行コードとして扱います。サンドボックスには隔離されません。`offline_mock: true`、`redirect: "error"`、`resolved_ips`、`tls_servername` は、注入先のコールバックに渡す参考情報です。これらの値によってオフライン動作が強制されたり、コールバックによる任意のネットワーク通信が阻止されたりするわけではありません。
 
-DNS pinning, socket address binding, enforced TLS server-name validation, prevention of re-resolution, and network-level redirect enforcement are unimplemented. Address checking is not an end-to-end SSRF guarantee. Injection of a malicious or networked lookup can perform network activity even when no transport is invoked; network/contact flags may therefore not reflect lookup activity. After transport invocation, contact flags are `unknown`. Abort/deadline handling rejects late results but cannot guarantee cancellation of external side effects.
+DNS 解決結果の固定、ソケット接続先アドレスの固定、TLS サーバー名検証の強制、再名前解決の防止、ネットワーク層でのリダイレクト制御は未実装です。アドレス検査は、通信全体にわたる SSRF 防止の保証ではありません。悪意のある名前解決処理や通信を行う名前解決処理を注入した場合、トランスポートを呼ばなくても通信が発生し得るため、通信・接触フラグに名前解決時の通信が反映されないことがあります。トランスポート呼び出し後の接触フラグは `unknown` になります。中断・期限処理は遅れて到着した結果を拒否しますが、外部への副作用の取り消しは保証しません。
 
-Inbox events and logs are in memory. This is not a durable queue, multi-user service, authorization boundary for hostile in-process callers, or delivery guarantee. Never use real credentials or personal data in the demonstration or tests.
+受信箱のイベントとログはメモリ内に保持します。永続キュー、複数ユーザー向けサービス、悪意のある同一プロセス内の呼び出し元に対する認可境界、配送保証は提供しません。デモやテストで実際の認証情報や個人データを使わないでください。
 
-## Configuration and layout
+## 設定と構成
 
-`config.example.json` contains intentionally unusable placeholders. Keep mock mode and `configured: false` for offline exploration. Do not place secrets in tracked files.
+`config.example.json` には、意図的に使用できないプレースホルダーを入れています。オフラインで試す場合は、モックモードと `configured: false` を維持してください。Git の追跡対象ファイルに秘密情報を置かないでください。
 
-- `src/`: in-process bridge, callback verification, inbox, validation and tool handlers
-- `test/`: offline unit and regression tests using synthetic data
-- `scripts/mock-demo.js`: offline demonstration
-- `SECURITY.md`: security boundaries and reporting
-- `CONTRIBUTING.md`: development and review requirements
-- `PREFLIGHT.md`: publication review record and remaining gates
+- `src/`: 同一プロセス内のブリッジ、コールバック検証、受信箱、入力検証、ツールハンドラー
+- `test/`: 合成データを使うオフラインの単体テスト・回帰テスト
+- `scripts/mock-demo.js`: オフラインデモ
+- `SECURITY.md`: セキュリティ上の境界と報告方法
+- `CONTRIBUTING.md`: 開発とレビューの要件
+- `PREFLIGHT.md`: 共有前の検査記録と残る確認事項
 
-## Validation status
+## 検証状況
 
-The supplied repaired source passed 36 offline tests and the mock demo in independent review. Six additional independent regression probes were reported as passing; these probes are separate from the 36-test suite. These results do not establish live interoperability or production security. See `PREFLIGHT.md` for the publication candidate checks and their limits.
+提供された修正済みソースは、独立レビューでオフラインテスト 36 件とモックデモに合格しました。追加の独立した回帰検査 6 件についても合格が報告されています。この 6 件は、同梱の 36 件のテストとは別の検査です。これらの結果は、実サービスとの相互運用性や本番環境の安全性を証明するものではありません。共有候補の検査内容と限界は `PREFLIGHT.md` を参照してください。
 
-## Optional manual CI
+## 任意の手動 CI
 
-`.github/workflows/offline-checks.yml` defines a manual-only `workflow_dispatch` check using Node.js 22, the offline tests, and the mock demo. It has no push, pull-request, scheduled, or workflow-completion trigger. Actions are pinned to reviewed official commit references, with read-only repository permissions and checkout credential persistence disabled. No project secrets, package install, upload, deployment, or live bridge calls are configured.
+`.github/workflows/offline-checks.yml` には、Node.js 22 でオフラインテストとモックデモを実行する、手動専用の `workflow_dispatch` ワークフローがあります。プッシュ、プルリクエスト、定期実行、別ワークフローの完了による自動起動はありません。使用する公式 Actions は確認済みのコミット参照に固定し、リポジトリ権限は読み取り専用、チェックアウト時の認証情報の保存は無効にしています。プロジェクトの秘密情報、パッケージのインストール、アップロード、デプロイ、実サービスへのブリッジ呼び出しは設定していません。
 
-The workflow has not been run on GitHub: CI runtime is UNTESTED. Local validation passed all 36 tests and the mock demo; that does not establish a remote CI pass. A future manual run uses GitHub runner resources and may fetch checkout/runtime dependencies; it requires a separate maintainer decision and available quota. Do not trigger it merely by publishing this source.
+GitHub 上ではまだ実行していないため、リモート CI の実行結果は未検証です。ローカルではテスト 36 件とモックデモに合格しましたが、リモート CI の合格を示すものではありません。今後の手動実行では GitHub ランナーのリソースを使用し、チェックアウトや実行環境の依存物を取得する可能性があります。実行には、管理者による別途の判断と利用可能な実行枠が必要です。ソースを共有しただけで実行しないでください。
 
-## License
+## ライセンス
 
-MIT; see `LICENSE`.
+MIT ライセンスです。英語原文の `LICENSE` を参照してください。

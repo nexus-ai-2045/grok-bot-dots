@@ -1,9 +1,9 @@
-# Security
+# セキュリティ
 
-This is an offline experimental prototype with no supported production deployment or live integration. Only the current source snapshot is considered for review; no support or response-time commitment is made.
+これはオフラインの実験用試作モデルです。本番運用や実サービスとの連携はサポートしていません。レビュー対象は現在のソーススナップショットのみで、サポートや応答期限は約束しません。
 
-Treat injected callbacks as fully trusted executable code. `offline_mock` and transport request options are advisory. DNS pinning and enforced network redirect/TLS controls are not implemented. Injected lookup activity may not be reflected in contact flags. A timeout does not guarantee cancellation of side effects.
+注入するコールバックは、全面的に信頼できる実行コードとして扱ってください。`offline_mock` やトランスポートへのリクエストオプションは参考情報です。DNS 解決結果の固定や、ネットワーク層でのリダイレクト・TLS 制御の強制は未実装です。注入した名前解決処理による通信は、接触フラグに反映されないことがあります。タイムアウトは、副作用の取り消しを保証しません。
 
-Do not use live credentials, session extraction, personal information, or untrusted callbacks. There is no HTTP listener, stdio MCP service, or dot wake capability. In-process access is not isolated from the host application.
+実際の認証情報、セッション情報の抽出、個人情報、信頼できないコールバックを使用しないでください。HTTP リスナー、標準入出力（stdio）を使う MCP サービス、dot を起動する機能はありません。同一プロセス内のアクセスは、ホストアプリケーションから隔離されません。
 
-For a vulnerability, use the repository's private vulnerability reporting feature if it is available. If it is unavailable, open only a minimal issue requesting a private reporting channel; do not include secrets, personal information, or exploitable details publicly. No private channel is claimed to exist before repository setup.
+脆弱性を報告する際は、このリポジトリで非公開の脆弱性報告機能が利用できる場合に限り、その機能を使ってください。利用できない場合は、非公開の報告先を問い合わせる最小限の Issue のみを作成し、秘密情報、個人情報、悪用可能な詳細を公開しないでください。報告機能の設定を確認するまでは、非公開の報告先があると見なさないでください。

@@ -1,7 +1,7 @@
-# Contributing
+# 開発への参加
 
-Keep changes within the offline experimental scope. Use Node.js 22 or later, run `node --test test/*.test.js` and `node scripts/mock-demo.js`, and review the diff before submission. No dependency installation is needed.
+変更はオフライン実験の範囲内に留めてください。Node.js 22 以降を使い、`node --test test/*.test.js` と `node scripts/mock-demo.js` を実行し、提出前に差分を確認してください。依存パッケージのインストールは不要です。
 
-Add synthetic tests for changed behavior. Never commit credentials, real messages, personal data, private endpoints, logs from real users, or local absolute paths. Do not add networking, listeners, session extraction, or live integration claims without a separate design and security review.
+挙動を変える場合は、合成データを使うテストを追加してください。認証情報、実際のメッセージ、個人データ、非公開の接続先、実ユーザーのログ、ローカルの絶対パスはコミットしないでください。通信機能、リスナー、セッション情報の抽出を追加したり、実サービスとの連携をうたったりする場合は、別途、設計とセキュリティのレビューが必要です。
 
-Document trust boundaries and limitations. A passing test or scanner is not publication approval. Changes to package metadata, licensing, external behavior, or publication scope require maintainer review. Contributions are provided under the repository's MIT license.
+信頼境界と制限を文書化してください。テストやスキャナーへの合格は、公開の承認ではありません。パッケージのメタデータ、ライセンス、外部への動作、公開範囲の変更には管理者のレビューが必要です。貢献内容には、このリポジトリの MIT ライセンスが適用されます。
