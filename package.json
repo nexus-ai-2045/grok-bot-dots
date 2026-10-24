@@ -1,0 +1,15 @@
+{
+  "name": "grok-bot-dots",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Offline experimental callback bridge. Mock mode by default; no live integration.",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "demo": "node scripts/mock-demo.js"
+  }
+}

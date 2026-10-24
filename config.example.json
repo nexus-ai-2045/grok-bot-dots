@@ -1,0 +1,25 @@
+{
+  "mode": "mock",
+  "grok_bot_routine_webhook": {
+    "configured": false,
+    "documentation": "unverified_for_grok_bot_routines",
+    "auth_scheme": "unset",
+    "allow_unverified_scheme": false,
+    "endpoint": "https://example.invalid/REPLACE_WITH_OFFICIALLY_CONFIGURED_ROUTINE_WEBHOOK",
+    "auth_secret": "whsec_REPLACE_WITH_BASE64_SECRET_OUTSIDE_REPO",
+    "timeout_ms": 5000
+  },
+  "callback_inbox": {
+    "configured": false,
+    "shared_secret": "whsec_REPLACE_WITH_CALLBACK_SECRET_OUTSIDE_REPO",
+    "max_body_bytes": 16384,
+    "max_hops": 3,
+    "timestamp_tolerance_seconds": 300,
+    "max_events": 100
+  },
+  "dot_ingress": {
+    "configured": false,
+    "endpoint": null,
+    "automatic_wake": false
+  }
+}
